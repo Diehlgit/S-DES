@@ -1,14 +1,32 @@
 #Initial Permutation Function
-#def IP():
+def IP(b: int):
+    bin_str = f"{b:010b}"
+    ip_idx = [1, 5, 2, 0, 3, 7, 4, 6]
+
+    permutation = ''.join(bin_str[i] for i in ip_idx)
+
+    return int(permutation, 2)
 
 #Inverse Function of Initial Permutation
-#def IP_inv():
+def IP_inv(b: int):
+    bin_str = f"{b:010b}"
+    ip_inv_idx = [3, 0, 2, 4, 6, 1, 7, 5]
+
+    permutation = ''.join(bin_str[i] for i in ip_inv_idx)
+
+    return int(permutation, 2)
 
 #f_k Function
 #def f_k():
 
 #Permutation Function that switches the two halves of the data
-#def SW():
+def SW(b: int):
+    bin_str = f"{b:08b}"
+    print(bin_str)
+    switched = bin_str[4:] + bin_str[:4]
+
+    return int(switched,2)
+
 
 #Key Permutation Function 
 def P10(key: int):
@@ -43,7 +61,7 @@ def Shift(key: int, n: int):
 
 def key_gen(key: int):
     if not (0 <= key < 1024):
-        raise ValueError("Input must br a 10-bit integer")
+        raise ValueError("Input must be a 10-bit integer")
     
     intermediate_key = Shift((P10(key)), 1)
 
