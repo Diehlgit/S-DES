@@ -1,66 +1,42 @@
 #Initial Permutation Function
-def IP(b: int):
-    bin_str = f"{b:010b}"
+def IP(bin_str: str):
     ip_idx = [1, 5, 2, 0, 3, 7, 4, 6]
-
-    permutation = ''.join(bin_str[i] for i in ip_idx)
-
-    return int(permutation, 2)
+    return ''.join(bin_str[i] for i in ip_idx)
 
 #Inverse Function of Initial Permutation
-def IP_inv(b: int):
-    bin_str = f"{b:010b}"
+def IP_inv(bin_str: str):
     ip_inv_idx = [3, 0, 2, 4, 6, 1, 7, 5]
-
-    permutation = ''.join(bin_str[i] for i in ip_inv_idx)
-
-    return int(permutation, 2)
+    return ''.join(bin_str[i] for i in ip_inv_idx)
 
 #f_k Function
-#def f_k():
+# f_k(L, R) = (L xor F(R, SK), R)
 
 #Permutation Function that switches the two halves of the data
-def SW(b: int):
-    bin_str = f"{b:08b}"
-    print(bin_str)
-    switched = bin_str[4:] + bin_str[:4]
-
-    return int(switched,2)
-
+def SW(bin_str: int):
+    return bin_str[4:] + bin_str[:4]
 
 #Key Permutation Function 
-def P10(key: int):
-    bin_str = f"{key:010b}"
-
+def P10(key: str):
     p10_idx = [2, 4, 1, 6, 3, 9, 0, 8, 7, 5]
-
-    permutation = ''.join(bin_str[i] for i in p10_idx)
-
-    return int(permutation, 2)
+    return ''.join(key[i] for i in p10_idx) 
 
 #Permutation Function that produces subkeys (K1 and K2)
-def P8(key: int):
-    bin_str = f"{key:010b}"
-
+def P8(key: str):
     p8_idx = [5, 2, 6, 3, 7, 4, 9, 8]
+    return ''.join(key[i] for i in p8_idx)
 
-    permutation = ''.join(bin_str[i] for i in p8_idx)
+def Shift(key: str, n: int):
+    fst_half = key[0:5]
+    snd_half = key[5:10]
 
-    return int(permutation, 2)
-
-def Shift(key: int, n: int):
-    bin_str = f"{key:010b}"
-    fst_half = bin_str[0:5]
-    snd_half = bin_str[5:10]
-
-    return int((fst_half[n:] + fst_half[:n] + snd_half[n:] + snd_half[:n]), 2)
+    return (fst_half[n:] + fst_half[:n] + snd_half[n:] + snd_half[:n])
 
 #K1 = P8 (Shift_1 (P10 (key)))
 #K2 = P8 (Shift_2 (Shift_1 (P10 (key))))
 #S-DES function that produces (K1, K2)
 
-def key_gen(key: int):
-    if not (0 <= key < 1024):
+def key_gen(key: str):
+    if not (set(key).issubset({'0', '1'}) and len(key) == 10):
         raise ValueError("Input must be a 10-bit integer")
     
     intermediate_key = Shift((P10(key)), 1)
