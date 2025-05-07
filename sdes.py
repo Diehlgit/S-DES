@@ -9,6 +9,30 @@ IP_INV = lambda s: permutation(s, [3, 0, 2, 4, 6, 1, 7, 5])
 
 #f_k Function
 # f_k(L, R) = (L xor F(R, SK), R)
+# F(R, SK) =
+#   let s := (E/P(R) xor SK)
+#       P4(S0[s[0] + s[3]][s[1] + s[2]] + S1[s[4] + s[7]][s[5] + s[6]]))
+
+#S-Boxes used in F function
+S0 = {'00': {'00': '01', '01': '00', '10': '11', '11': '10'},
+      '01': {'00': '11', '01': '10', '10': '01', '11': '00'},
+      '10': {'00': '00', '01': '10', '10': '01', '11': '11'},
+      '11': {'00': '11', '01': '01', '10': '11', '11': '10'}
+      }
+
+S1 = {'00': {'00': '00', '01': '01', '10': '10', '11': '11'},
+      '01': {'00': '10', '01': '00', '10': '01', '11': '11'},
+      '10': {'00': '11', '01': '00', '10': '01', '11': '00'},
+      '11': {'00': '10', '01': '01', '10': '00', '11': '11'}
+      }
+
+#Permutation that produces F function result
+P4 = lambda s: permutation(s, [1, 3, 2, 0])
+
+#Extension Permutation (E/P) used in the beginning of F function
+EP = lambda s: permutation(s, [3, 0, 1, 2, 1, 2, 3, 0])
+
+
 
 #Permutation Function that switches the two halves of the data
 SW = lambda s: permutation(s, [4, 5, 6, 7, 0, 1, 2, 3])
