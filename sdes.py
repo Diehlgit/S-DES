@@ -1,29 +1,23 @@
+def permutation(s: str, indices: list[int]) -> str:
+    return ''.join(s[i] for i in indices)
+
 #Initial Permutation Function
-def IP(bin_str: str):
-    ip_idx = [1, 5, 2, 0, 3, 7, 4, 6]
-    return ''.join(bin_str[i] for i in ip_idx)
+IP = lambda s: permutation(s, [1, 5, 2, 0, 3, 7, 4, 6])
 
 #Inverse Function of Initial Permutation
-def IP_inv(bin_str: str):
-    ip_inv_idx = [3, 0, 2, 4, 6, 1, 7, 5]
-    return ''.join(bin_str[i] for i in ip_inv_idx)
+IP_INV = lambda s: permutation(s, [3, 0, 2, 4, 6, 1, 7, 5])
 
 #f_k Function
 # f_k(L, R) = (L xor F(R, SK), R)
 
 #Permutation Function that switches the two halves of the data
-def SW(bin_str: int):
-    return bin_str[4:] + bin_str[:4]
+SW = lambda s: permutation(s, [4, 5, 6, 7, 0, 1, 2, 3])
 
 #Key Permutation Function 
-def P10(key: str):
-    p10_idx = [2, 4, 1, 6, 3, 9, 0, 8, 7, 5]
-    return ''.join(key[i] for i in p10_idx) 
+P10 = lambda s: permutation(s, [2, 4, 1, 6, 3, 9, 0, 8, 7, 5])
 
 #Permutation Function that produces subkeys (K1 and K2)
-def P8(key: str):
-    p8_idx = [5, 2, 6, 3, 7, 4, 9, 8]
-    return ''.join(key[i] for i in p8_idx)
+P8  = lambda s: permutation(s, [5, 2, 6, 3, 7, 4, 9, 8])
 
 def Shift(key: str, n: int):
     fst_half = key[0:5]
