@@ -91,7 +91,7 @@ def sdes_encryption(plaintext:str, key:str):
 # plaintext = IP_inv (f_k1 (SW (f_k2 (IP (ciphertext)))))
 def sdes_decryption(ciphertext:str, key:str):
     if not(set(ciphertext).issubset({'0', '1'}) and len(ciphertext) == 8):
-        raise ValueError("Plaintext input must be an 8-bit integer")
+        raise ValueError("Ciphertext input must be an 8-bit integer")
     if not (set(key).issubset({'0', '1'}) and len(key) == 10):
         raise ValueError("Input must be a 10-bit integer")
 
