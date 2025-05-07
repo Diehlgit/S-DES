@@ -1,3 +1,4 @@
+#General function used to define specific permutation functions
 def permutation(s: str, indices: list[int]) -> str:
     return ''.join(s[i] for i in indices)
 
@@ -32,7 +33,20 @@ P4 = lambda s: permutation(s, [1, 3, 2, 0])
 #Extension Permutation (E/P) used in the beginning of F function
 EP = lambda s: permutation(s, [3, 0, 1, 2, 1, 2, 3, 0])
 
+#XOR function to work with strings
+def XOR(s1:str, s2:str):
+    return ''.join('1' if c1 != c2 else '0' for c1, c2 in zip(s1, s2))
 
+#F function used in f_k
+def F(R: str, SK: str):
+    s = XOR(EP(R), SK)
+    return P4(S0[s[0] + s[3]][s[1] + s[2]] + S1[s[4] + s[7]][s[5] + s[6]])
+
+#f_k function
+def f_k(S:str, K:str):
+    L = S[:4]
+    R = S[4:]
+    return (XOR(L, F(R, K))) + R
 
 #Permutation Function that switches the two halves of the data
 SW = lambda s: permutation(s, [4, 5, 6, 7, 0, 1, 2, 3])
@@ -54,9 +68,6 @@ def Shift(key: str, n: int):
 #S-DES function that produces (K1, K2)
 
 def key_gen(key: str):
-    if not (set(key).issubset({'0', '1'}) and len(key) == 10):
-        raise ValueError("Input must be a 10-bit integer")
-    
     intermediate_key = Shift((P10(key)), 1)
 
     K1 = P8(intermediate_key)
@@ -64,10 +75,26 @@ def key_gen(key: str):
 
     return (K1, K2)
 
-
 #S-DES Encryption Definition
 # ciphertext = IP_inv (f_k2 (SW (f_k1 (IP(plaintext)))))
+def sdes_encryption(plaintext:str, key:str):
+    if not(set(plaintext).issubset({'0', '1'}) and len(plaintext) == 8):
+        raise ValueError("Plaintext input must be an 8-bit integer")
+    if not (set(key).issubset({'0', '1'}) and len(key) == 10):
+        raise ValueError("Input must be a 10-bit integer")
 
+    (K1, K2) = key_gen(key)
+
+    return IP_INV(f_k(SW(f_k(IP(plaintext), K1)), K2))
 
 #S-DES Decryption Definition
 # plaintext = IP_inv (f_k1 (SW (f_k2 (IP (ciphertext)))))
+def sdes_decryption(ciphertext:str, key:str):
+    if not(set(ciphertext).issubset({'0', '1'}) and len(ciphertext) == 8):
+        raise ValueError("Plaintext input must be an 8-bit integer")
+    if not (set(key).issubset({'0', '1'}) and len(key) == 10):
+        raise ValueError("Input must be a 10-bit integer")
+
+    (K1, K2) = key_gen(key)
+
+    return IP_INV(f_k(SW(f_k(IP(ciphertext), K2)), K1))
