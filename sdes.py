@@ -98,3 +98,17 @@ def sdes_decryption(ciphertext:str, key:str):
     (K1, K2) = key_gen(key)
 
     return IP_INV(f_k(SW(f_k(IP(ciphertext), K2)), K1))
+
+######### Modos de Operacao ###########
+
+#Eletronic codeblock (ECB)
+# C_j = E(K, P_j)
+# P_j = D(K, C_j)
+
+
+#Cipher Block Chaining (CBC)
+# C_1 = E(K, [P_1 XOR IV])
+# P_1 = D(K, C_1) XOR IV
+
+# C_j = E(K, [P_j XOR C_j-1])
+# P_j = D(K, C_j) XOR C_j-1
