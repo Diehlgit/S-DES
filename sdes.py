@@ -104,11 +104,50 @@ def sdes_decryption(ciphertext:str, key:str):
 #Eletronic codeblock (ECB)
 # C_j = E(K, P_j)
 # P_j = D(K, C_j)
+# No need for padding because block length is the same as message length (*8 bits) 
+def ecb_encrypt(message: str, key: str) -> list[str]:
+    blocks = message.strip().split()
+    return ' '.join([sdes_encryption(block, key) for block in blocks])
+
+def ecb_decrypt(ciphertext: str, key: str) -> str:
+    blocks = ciphertext.strip().split()
+    return ' '.join([sdes_decryption(block, key) for block in blocks])
 
 
 #Cipher Block Chaining (CBC)
 # C_1 = E(K, [P_1 XOR IV])
 # P_1 = D(K, C_1) XOR IV
-
 # C_j = E(K, [P_j XOR C_j-1])
 # P_j = D(K, C_j) XOR C_j-1
+def cbc_encrypt(message: str, key: str, iv: str) -> list[str]:
+    if not(set(iv).issubset({'0', '1'}) and len(iv) == 8):
+        raise ValueError("IV must be an 8-bit binary string")
+
+    blocks = message.strip().split()
+    ciphertext_blocks = []
+    prev = iv
+
+    for block in blocks:
+        xored = XOR(block, prev)
+        cipher = sdes_encryption(xored, key)
+        ciphertext_blocks.append(cipher)
+        prev = cipher
+
+    return ' '.join(ciphertext_blocks)
+
+def cbc_decrypt(ciphertext: str, key: str, iv: str) -> str:
+    if not(set(iv).issubset({'0', '1'}) and len(iv) == 8):
+        raise ValueError("IV must be an 8-bit binary string")
+
+    blocks = ciphertext.strip().split()
+    plaintext_blocks = []
+    prev = iv
+
+    for block in blocks:
+        decrypted = sdes_decryption(block, key)
+        plaintext = XOR(decrypted, prev)
+        plaintext_blocks.append(plaintext)
+        prev = block
+
+    return ' '.join(plaintext_blocks)
+
