@@ -87,6 +87,26 @@ def sdes_encryption(plaintext:str, key:str):
 
     return IP_INV(f_k(SW(f_k(IP(plaintext), K1)), K2))
 
+def print_sdes_encryption(plaintext:str, key:str):
+    if not(set(plaintext).issubset({'0', '1'}) and len(plaintext) == 8):
+        raise ValueError("Plaintext input must be an 8-bit integer")
+    if not (set(key).issubset({'0', '1'}) and len(key) == 10):
+        raise ValueError("Input must be a 10-bit integer")
+    print(f"Chave: {key}")
+    (K1, K2) = key_gen(key)
+    print(f"Sub Chave 1: {K1}")
+    print(f"Sub Chave 2: {K2}")
+
+    tmp = IP(plaintext)
+    print(f"Mensagem apos IP: {tmp}")
+    tmp = f_k(tmp, K1)
+    print(f"Messagem apos o primeiro f_k: {tmp}")
+    tmp = SW(tmp)
+    print(f"Mensagem apos o primeiro switch: {tmp}")
+    tmp = f_k(tmp, K2)
+    print(f"Mensagem apos o segundo f_k: {tmp}")
+    print(f"Cipher text: {IP_INV(tmp)}")
+
 #S-DES Decryption Definition
 # plaintext = IP_inv (f_k1 (SW (f_k2 (IP (ciphertext)))))
 def sdes_decryption(ciphertext:str, key:str):
