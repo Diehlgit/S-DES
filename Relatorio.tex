@@ -8,17 +8,44 @@
 \maketitle
 
 \begin{abstract}
-  Texto detalhando o desenvolvimento de uma versão simplificada do algoritmo de criptografia DES, denominado de S-DES. Nele é utilizado uma chave de 10 bits e uma entrada de um byte.
-  \textbf{Palavras-chave}: Criptografia, DES.
+  Texto detalhando o desenvolvimento de uma versão simplificada do algoritmo de criptografia DES, denominado de S-DES, que realiza a encriptação e decriptação utilizando dois modos de operação, o ECB e CBC. Nele é utilizado uma chave de 10 bits e uma entrada de convertida em uma lista de bytes. 
+  \textbf{Palavras-chave}: Criptografia, DES, ECB, CBC.
 \end{abstract}
 
-Esse trabalho irá implementar e detalhar as etapas de confecção do algoritmo de criptografia simétria S-DES, um modelo simplificado do algoritmo DES. Ao longo da implementação
+Esse trabalho irá implementar e detalhar as etapas de confecção do algoritmo de criptografia simetria S-DES, um modelo simplificado do algoritmo DES. Para compreender melhor a implementação que está sendo feita, serão repassados os resultados de cada função baseado nos dados de entrada a baixo:
+
+\begin{itemize}
+  \item Chave: 1010000010
+  \item Mensagem: 11010111 01101100 10111010 11110000
+  \item IV CBC: 01010101
+\end{itemize}
 
 \section{Geração de Chaves Subjacentes}
-No processo de geração das chaves subjacentes os 10 bits iniciais são transformados em 2 subchaves (k1 e k2) derivadas a partir da chave recebida. 
+No processo de geração das chaves subjacentes os 10 bits iniciais são transformados em 2 sub-chaves (k1 e k2) derivadas a partir da chave recebida. Para obter as sub-chaves são utilizadas 2 funções principais em conjunto com um array que representa as permutações.
 
+Bloco de código:
+
+def permutation(s: str, indices: list[int]) -> str:
+    return ''.join(s[i] for i in indices)
+
+\section{Modos de operação}
+Ao iniciar o algoritmo, poderão ser utilizados dois modos de operação. Esses algoritmos são:
+
+\subsection{ECB}
+A técnica utilizada por esse modo de operação é bem simples, principalmente pela entrada fornecida será dividida em entradas do mesmo tamanho da utilizada pelo SDES, ou seja, a entrada do ECB será de um conjunto de blocos de 8 bits que serão passados um a um para o algoritmo de encriptação do SDES.
+
+Para isso foi utilizada a função:
+
+IMAGEM ECB ENCRYPT
+
+Para exemplificar a entrada fornecida ao programa ao passar pela função será convertida ao array [11010111, 01101100, 10111010, 11110000]. Vale lembrar que esse \textbf{não} é o valor retornado pela função, pois este só será possível de obter ao finalizar todo o restante do algoritmo do SDES.
+
+
+\subsection{CBC}
 
 \section{Permutação Inicial}
+Para realizar a permutação inicial é utilizada a mesma função de permutação utilizada na geração das sub-chaves. O valor da permutação é definido pelo array [1, 5, 2, 0, 3, 7, 4, 6] e terá como retorno os seguintes valores em cada um dos modos de operação:
+
 
 \section{Divisão em Metades}
 
