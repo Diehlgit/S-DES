@@ -8,6 +8,21 @@ IP = lambda s: permutation(s, [1, 5, 2, 0, 3, 7, 4, 6])
 #Inverse Function of Initial Permutation
 IP_INV = lambda s: permutation(s, [3, 0, 2, 4, 6, 1, 7, 5])
 
+#Permutation Function that switches the two halves of the data
+SW = lambda s: permutation(s, [4, 5, 6, 7, 0, 1, 2, 3])
+
+#Key Permutation Function 
+P10 = lambda s: permutation(s, [2, 4, 1, 6, 3, 9, 0, 8, 7, 5])
+
+#Permutation Function that produces subkeys (K1 and K2)
+P8  = lambda s: permutation(s, [5, 2, 6, 3, 7, 4, 9, 8])
+
+#Permutation that produces F function result
+P4 = lambda s: permutation(s, [1, 3, 2, 0])
+
+#Extension Permutation (E/P) used in the beginning of F function
+EP = lambda s: permutation(s, [3, 0, 1, 2, 1, 2, 3, 0])
+
 #f_k Function
 # f_k(L, R) = (L xor F(R, SK), R)
 # F(R, SK) =
@@ -27,12 +42,6 @@ S1 = {'00': {'00': '00', '01': '01', '10': '10', '11': '11'},
       '11': {'00': '10', '01': '01', '10': '00', '11': '11'}
       }
 
-#Permutation that produces F function result
-P4 = lambda s: permutation(s, [1, 3, 2, 0])
-
-#Extension Permutation (E/P) used in the beginning of F function
-EP = lambda s: permutation(s, [3, 0, 1, 2, 1, 2, 3, 0])
-
 #XOR function to work with strings
 def XOR(s1:str, s2:str):
     return ''.join('1' if c1 != c2 else '0' for c1, c2 in zip(s1, s2))
@@ -47,15 +56,6 @@ def f_k(S:str, K:str):
     L = S[:4]
     R = S[4:]
     return (XOR(L, F(R, K))) + R
-
-#Permutation Function that switches the two halves of the data
-SW = lambda s: permutation(s, [4, 5, 6, 7, 0, 1, 2, 3])
-
-#Key Permutation Function 
-P10 = lambda s: permutation(s, [2, 4, 1, 6, 3, 9, 0, 8, 7, 5])
-
-#Permutation Function that produces subkeys (K1 and K2)
-P8  = lambda s: permutation(s, [5, 2, 6, 3, 7, 4, 9, 8])
 
 def Shift(key: str, n: int):
     fst_half = key[0:5]
@@ -87,6 +87,28 @@ def sdes_encryption(plaintext:str, key:str):
 
     return IP_INV(f_k(SW(f_k(IP(plaintext), K1)), K2))
 
+#F function with internal prints
+def print_F(R: str, SK: str):
+    tmp = EP(R)
+    print(f"EP(R): {tmp}")
+
+    s = XOR(tmp, SK)
+    print(f"XOR(EP(R), SK): {s}")
+
+    print(f"S0[{s[0] + s[3]}][{s[1] + s[2]}] + S1[{s[4] + s[7]}][{s[5] + s[6]}]")
+    tmp = P4(S0[s[0] + s[3]][s[1] + s[2]] + S1[s[4] + s[7]][s[5] + s[6]])
+    print(f"P4: {tmp}")
+
+    return tmp
+
+#f_k function with internal prints
+def print_f_k(S:str, K:str):
+    L = S[:4]
+    R = S[4:]
+    return (XOR(L, print_F(R, K))) + R
+
+
+# Print internal parts of S-DES
 def print_sdes_encryption(plaintext:str, key:str):
     if not(set(plaintext).issubset({'0', '1'}) and len(plaintext) == 8):
         raise ValueError("Plaintext input must be an 8-bit integer")
@@ -98,13 +120,15 @@ def print_sdes_encryption(plaintext:str, key:str):
     print(f"Sub Chave 2: {K2}")
 
     tmp = IP(plaintext)
-    print(f"Mensagem apos IP: {tmp}")
-    tmp = f_k(tmp, K1)
-    print(f"Messagem apos o primeiro f_k: {tmp}")
+    print(f"Mensagem após IP: {tmp}")
+
+    tmp = print_f_k(tmp, K1)
+    print(f"Mensagem após o primeiro f_k: {tmp}")
     tmp = SW(tmp)
-    print(f"Mensagem apos o primeiro switch: {tmp}")
-    tmp = f_k(tmp, K2)
-    print(f"Mensagem apos o segundo f_k: {tmp}")
+    print(f"Mensagem após o switch: {tmp}")
+    
+    tmp = print_f_k(tmp, K2)
+    print(f"Mensagem após o segundo f_k: {tmp}")
     print(f"Cipher text: {IP_INV(tmp)}")
 
 #S-DES Decryption Definition
@@ -152,6 +176,28 @@ def cbc_encrypt(message: str, key: str, iv: str) -> list[str]:
         cipher = sdes_encryption(xored, key)
         ciphertext_blocks.append(cipher)
         prev = cipher
+
+    return ' '.join(ciphertext_blocks)
+
+
+def print_cbc_encrypt(message: str, key: str, iv: str) -> list[str]:
+    if not(set(iv).issubset({'0', '1'}) and len(iv) == 8):
+        raise ValueError("IV must be an 8-bit binary string")
+
+    blocks = message.strip().split()
+    ciphertext_blocks = []
+    prev = iv
+    i = 1
+    for block in blocks:
+        print(f"{i}º Interação")
+        print(f"Bloco: {block}. Vetor usado no XOR: {prev}", end=" -> ")
+        xored = XOR(block, prev)
+        print(f"XOR: {xored}")
+        cipher = sdes_encryption(xored, key)
+        print(f"PlainText -> ciphertext: {block} -> {cipher}")
+        ciphertext_blocks.append(cipher)
+        prev = cipher
+        i+=1
 
     return ' '.join(ciphertext_blocks)
 
